@@ -1,0 +1,58 @@
+version: '3.7'
+
+services:
+  ca:
+    container_name: "my_private_ca"
+    hostname: "my_private_ca"
+    build:
+      context: ./ca
+    image: lmtx_certs_ca:0.1
+    volumes:
+      - ca_certificate:/root/ca/certificate/
+      - csr_vol_mq:/var/csr/mq/
+      - csr_vol_a:/var/csr/client_a/
+      - csr_vol_b:/var/csr/client_b/
+
+  mq_broker:
+    container_name: "mq_broker"
+    hostname: "mq_broker"
+    build:
+      context: ./mq_broker
+    image: lmtx_certs_mq_broker:0.1
+    depends_on:
+      - ca
+    volumes:
+      - ca_certificate:/etc/mosquitto/ca_certificates/
+      - csr_vol_mq:/var/csr/
+
+  client_a:
+    container_name: "client_a"
+    hostname: "client_a"
+    build:
+      context: ./clients
+      dockerfile: Dockerfile-client_a
+    image: lmtx_certs_client_a:0.1
+    depends_on: 
+      - ca
+    volumes:
+      - ca_certificate:/client_a/ca/
+      - csr_vol_a:/client_a/csr/
+
+  client_b:
+    container_name: "client_b"
+    hostname: "client_b"
+    build:
+      context: ./clients
+      dockerfile: Dockerfile-client_b
+    image: lmtx_certs_client_b:0.1
+    depends_on: 
+      - ca
+    volumes:
+      - ca_certificate:/client_b/ca/
+      - csr_vol_b:/client_b/csr/
+
+volumes:
+  ca_certificate:
+  csr_vol_mq:
+  csr_vol_a:
+  csr_vol_b:

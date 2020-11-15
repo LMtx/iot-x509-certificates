@@ -1,0 +1,21 @@
+FROM ubuntu:20.04
+
+RUN apt update && \
+    apt install -y mosquitto-clients openssl
+
+RUN mkdir -p /client_b/certs/
+RUN mkdir -p /client_b/csr/
+
+# AUTOMATED STEPS - similar as for the Client A 
+RUN openssl genrsa -out /client_b/certs/client_b.key 4096
+RUN openssl req -new -out /client_b/csr/client_b.csr -key /client_b/certs/client_b.key -subj "/CN=client_b"
+
+WORKDIR /client_b/
+
+# helper scripts
+ADD scripts/client_b_entry.sh /usr/bin
+ADD scripts/client_b_bash.sh /usr/bin
+RUN chmod 700 /usr/bin/client_b_entry.sh
+RUN chmod 700 /usr/bin/client_b_bash.sh
+
+ENTRYPOINT ["/usr/bin/client_b_entry.sh"]

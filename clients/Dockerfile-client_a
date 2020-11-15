@@ -1,0 +1,17 @@
+FROM ubuntu:20.04
+
+RUN apt update && \
+    apt install -y mosquitto-clients openssl
+
+RUN mkdir -p /client_a/certs/
+RUN mkdir -p /client_a/csr/
+
+WORKDIR /client_a/
+
+# helper scripts
+ADD scripts/client_a_entry.sh /usr/bin
+ADD scripts/client_a_bash.sh /usr/bin
+RUN chmod 700 /usr/bin/client_a_entry.sh
+RUN chmod 700 /usr/bin/client_a_bash.sh
+
+ENTRYPOINT ["/usr/bin/client_a_entry.sh"]
