@@ -1,5 +1,11 @@
 # x509 certificates in IoT - a deep dive
 
+## Video
+
+You can find my video covering the steps described below on my YT channel:
+
+https://youtu.be/aqzpRyy5E-I
+
 ## Overview
 
 This is a deep dive into **x509 certificates** and how they are used in **IoT**.
